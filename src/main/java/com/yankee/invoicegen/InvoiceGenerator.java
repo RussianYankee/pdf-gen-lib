@@ -27,7 +27,7 @@ public class InvoiceGenerator {
 
             PdfPTable headerTable = new PdfPTable(2);
             headerTable.setWidthPercentage(100);
-//            headerTable.setWidths(new int[]{1, 2});
+            headerTable.setWidths(new int[]{2, 1});
             composeTableHeader(headerTable, headerData);
 
             document.add(headerTable);
@@ -38,16 +38,16 @@ public class InvoiceGenerator {
             customerTable.setSpacingBefore(10f);
             customerTable.setSpacingAfter(10f);
 
-            customerTable.addCell(createDetailCell("Customer Name: " + headerData.getCustomerName()));
-            customerTable.addCell(createDetailCell("Billing Address: " + headerData.getBillingAddress()));
-            customerTable.addCell(createDetailCell("Service Address: " + headerData.getServiceAddress()));
+            customerTable.addCell(createDetailCellLeft("Customer Name: " + headerData.getCustomerName()));
+            customerTable.addCell(createDetailCellLeft("Billing Address: " + headerData.getBillingAddress()));
+            customerTable.addCell(createDetailCellLeft("Service Address: " + headerData.getServiceAddress()));
 
             document.add(customerTable);
 
             // Add table
             PdfPTable table = new PdfPTable(4);
             table.setWidthPercentage(100);
-            table.setWidths(new float[] {2f, 0.5f, 1, 1});
+            table.setWidths(new float[]{2f, 0.5f, 1, 1});
             PdfPCell cell;
 
             // Header cells with light gray background
@@ -89,9 +89,16 @@ public class InvoiceGenerator {
         }
     }
 
-    private PdfPCell createDetailCell(String text) {
+    private PdfPCell createDetailCellLeft(String text) {
         PdfPCell cell = new PdfPCell(new Phrase(text, FontFactory.getFont(FontFactory.HELVETICA, 10)));
         cell.setBorder(Rectangle.NO_BORDER);
+        return cell;
+    }
+
+    private PdfPCell createDetailCellRight(String text) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, FontFactory.getFont(FontFactory.HELVETICA, 10)));
+        cell.setBorder(Rectangle.NO_BORDER);
+        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
         return cell;
     }
 
@@ -155,13 +162,18 @@ public class InvoiceGenerator {
         table.addCell(leftSideCell);
 
         // Right side: invoice details
-        PdfPTable detailsTable = new PdfPTable(1);
+        PdfPTable detailsTable = new PdfPTable(2);
         detailsTable.setWidthPercentage(100);
 
-        detailsTable.addCell(createDetailCell("Invoice#: " + headerData.getInvoiceNumber()));
-        detailsTable.addCell(createDetailCell("Service Date: " + headerData.getServiceDate()));
-        detailsTable.addCell(createDetailCell("Due Date: " + headerData.getDueDate()));
-        detailsTable.addCell(createDetailCell("Amount Due: " + headerData.getAmountDue()));
+        detailsTable.addCell(createDetailCellLeft("Invoice#: "));
+        detailsTable.addCell(createDetailCellRight(headerData.getInvoiceNumber()));
+        detailsTable.addCell(createDetailCellLeft("Service Date: "));
+        detailsTable.addCell(createDetailCellRight(headerData.getServiceDate()));
+        detailsTable.addCell(createDetailCellLeft("Due Date: "));
+        detailsTable.addCell(createDetailCellRight(headerData.getDueDate()));
+        detailsTable.addCell(createDetailCellLeft("Amount Due: "));
+        detailsTable.addCell(createDetailCellRight(headerData.getAmountDue()));
+
 
         PdfPCell detailsCell = new PdfPCell(detailsTable);
         detailsCell.setBorder(Rectangle.NO_BORDER);
