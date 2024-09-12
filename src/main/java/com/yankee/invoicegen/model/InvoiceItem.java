@@ -6,6 +6,13 @@ public class InvoiceItem {
     double unitPrice;
     double amount;
 
+    public InvoiceItem(String name, int quantity, double unitPrice, double amount) {
+        this.name = name;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+        this.amount = amount;
+    }
+
     public double getAmount() {
         return amount;
     }
