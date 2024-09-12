@@ -47,6 +47,7 @@ public class InvoiceGenerator {
             // Add table
             PdfPTable table = new PdfPTable(4);
             table.setWidthPercentage(100);
+            table.setWidths(new float[] {2f, 0.5f, 1, 1});
             PdfPCell cell;
 
             // Header cells with light gray background
