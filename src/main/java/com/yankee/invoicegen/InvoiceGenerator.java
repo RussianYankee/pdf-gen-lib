@@ -20,34 +20,18 @@ public class InvoiceGenerator {
             PdfWriter.getInstance(document, new FileOutputStream(filePath));
             document.open();
 
-            // Add header
-//            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
-//            Paragraph header = new Paragraph(headerText, headerFont);
-//            document.add(header);
+            // Add header table
+            document.add(composeHeaderTable(headerData));
 
-            PdfPTable headerTable = new PdfPTable(2);
-            headerTable.setWidthPercentage(100);
-            headerTable.setWidths(new int[]{2, 1});
-            composeTableHeader(headerTable, headerData);
-
-            document.add(headerTable);
-
+            document.add(new Chunk("\n"));
             // Add customer details section
-            PdfPTable customerTable = new PdfPTable(1);
-            customerTable.setWidthPercentage(100);
-            customerTable.setSpacingBefore(10f);
-            customerTable.setSpacingAfter(10f);
-
-            customerTable.addCell(createDetailCellLeft("Customer Name: " + headerData.getCustomerName()));
-            customerTable.addCell(createDetailCellLeft("Billing Address: " + headerData.getBillingAddress()));
-            customerTable.addCell(createDetailCellLeft("Service Address: " + headerData.getServiceAddress()));
-
-            document.add(customerTable);
+            document.add(composeCustomerTable(headerData));
 
             // Add table
             PdfPTable table = new PdfPTable(4);
             table.setWidthPercentage(100);
             table.setWidths(new float[]{2f, 0.5f, 1, 1});
+            table.setSpacingBefore(20f);
             PdfPCell cell;
 
             // Header cells with light gray background
@@ -141,7 +125,10 @@ public class InvoiceGenerator {
         }
     }
 
-    private void composeTableHeader(PdfPTable table, InvoiceHeaderData headerData) throws IOException {
+    private PdfPTable composeHeaderTable(InvoiceHeaderData headerData) throws IOException {
+        PdfPTable table = new PdfPTable(2);
+        table.setWidthPercentage(100);
+        table.setWidths(new int[]{2, 1});
         table.setWidthPercentage(100);
 
         // Left side: company logo and name
@@ -179,5 +166,24 @@ public class InvoiceGenerator {
         detailsCell.setBorder(Rectangle.NO_BORDER);
         detailsCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
         table.addCell(detailsCell);
+
+        return table;
+    }
+
+    private PdfPTable composeCustomerTable(InvoiceHeaderData headerData) {
+        PdfPTable table = new PdfPTable(2);
+        table.setWidthPercentage(60);
+        table.setHorizontalAlignment(Element.ALIGN_LEFT);
+        table.setWidths(new int[]{2, 5});
+        table.setSpacingBefore(20f);
+
+        table.addCell(createDetailCellLeft("Customer: "));
+        table.addCell(createDetailCellRight(headerData.getCustomerName()));
+        table.addCell(createDetailCellLeft("Billing Address: "));
+        table.addCell(createDetailCellRight(headerData.getBillingAddress()));
+        table.addCell(createDetailCellLeft("Service Address: "));
+        table.addCell(createDetailCellRight(headerData.getServiceAddress()));
+
+        return table;
     }
 }
