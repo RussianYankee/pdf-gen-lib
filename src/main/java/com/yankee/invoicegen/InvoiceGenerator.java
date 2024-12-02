@@ -73,6 +73,47 @@ public class InvoiceGenerator {
         }
     }
 
+    private static class CellBuilder {
+        private PdfPCell cell;
+
+        private CellBuilder() {
+            cell = new PdfPCell();
+        }
+
+        public static CellBuilder newCell() {
+            return new CellBuilder();
+        }
+
+        public CellBuilder setPhrase(Phrase phrase) {
+            cell.setPhrase(phrase);
+            return this;
+        }
+
+        public CellBuilder setHorizontalAlignment(int alignment) {
+            cell.setHorizontalAlignment(alignment);
+            return this;
+        }
+
+        public CellBuilder setBorder(int border) {
+            cell.setBorder(border);
+            return this;
+        }
+
+        public CellBuilder setPaddingTop(float paddingTop) {
+            cell.setPaddingTop(paddingTop);
+            return this;
+        }
+
+        public CellBuilder setPaddingBottom(float paddingBottom) {
+            cell.setPaddingBottom(paddingBottom);
+            return this;
+        }
+
+        public PdfPCell build() {
+            return cell;
+        }
+    }
+
     private PdfPCell createDetailCellLeft(String text) {
         PdfPCell cell = new PdfPCell(new Phrase(text, FontFactory.getFont(FontFactory.HELVETICA, 10)));
         cell.setBorder(Rectangle.NO_BORDER);
@@ -87,11 +128,12 @@ public class InvoiceGenerator {
     }
 
     private PdfPCell createItemCell(String text) {
-        PdfPCell cell = new PdfPCell(new Phrase(text));
-        cell.setPaddingTop(5);
-        cell.setPaddingBottom(5);
-        cell.setBorder(Rectangle.BOTTOM);
-        return cell;
+        return CellBuilder.newCell()
+                .setPhrase(new Phrase(text))
+                .setPaddingTop(5)
+                .setPaddingBottom(5)
+                .setBorder(Rectangle.BOTTOM)
+                .build();
     }
 
     private PdfPCell createItemCell(String text, int alignment) {
@@ -108,28 +150,27 @@ public class InvoiceGenerator {
         table.addCell(cell);
     }
 
-    private PdfPCell createCell(String text, int alignment, int border) {
-        PdfPCell cell = new PdfPCell(new Phrase(text));
-        cell.setHorizontalAlignment(alignment);
-        cell.setBorder(border);
-        return cell;
-    }
-
-    private PdfPCell createCell(String text, int alignment, int border, String fontName, int fontSize) {
-        PdfPCell cell = createCell(text, alignment, border);
-        cell.setPhrase(new Phrase(text, FontFactory.getFont(fontName, fontSize)));
-        return cell;
-    }
-
     private void composeTableFooter(PdfPTable table, double subtotal, double tax, double total) {
         String[] footerLabels = {"Subtotal", "Tax", "Total"};
         double[] footerValues = {subtotal, tax, total};
 
         for (int i = 0; i < footerLabels.length; i++) {
-            table.addCell(createCell("", Element.ALIGN_LEFT, Rectangle.NO_BORDER));
-            table.addCell(createCell("", Element.ALIGN_LEFT, Rectangle.NO_BORDER));
-            table.addCell(createCell(footerLabels[i], Element.ALIGN_LEFT, Rectangle.NO_BORDER));
-            table.addCell(createCell(String.format("$ %.2f", footerValues[i]), Element.ALIGN_RIGHT, Rectangle.NO_BORDER, FontFactory.HELVETICA_BOLD, 12));
+            table.addCell(CellBuilder.newCell()
+                    .setPhrase(new Phrase(""))
+                    .setHorizontalAlignment(Element.ALIGN_LEFT)
+                    .setBorder(Rectangle.NO_BORDER).build());
+            table.addCell(CellBuilder.newCell()
+                    .setPhrase(new Phrase(""))
+                    .setHorizontalAlignment(Element.ALIGN_LEFT)
+                    .setBorder(Rectangle.NO_BORDER).build());
+            table.addCell(CellBuilder.newCell()
+                    .setPhrase(new Phrase(footerLabels[i]))
+                    .setHorizontalAlignment(Element.ALIGN_LEFT)
+                    .setBorder(Rectangle.NO_BORDER).build());
+            table.addCell(CellBuilder.newCell()
+                    .setPhrase(new Phrase(String.format("$ %.2f", footerValues[i]), FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12)))
+                    .setHorizontalAlignment(Element.ALIGN_RIGHT)
+                    .setBorder(Rectangle.NO_BORDER).build());
         }
     }
 
