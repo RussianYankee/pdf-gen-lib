@@ -46,13 +46,13 @@ public class InvoiceGenerator {
                 cell = createItemCell(item.getName());
                 table.addCell(cell);
 
-                cell = createItemCell(String.valueOf(item.getQuantity()), Element.ALIGN_CENTER);
+                cell = createItemCell(String.valueOf(item.getQuantity()), Element.ALIGN_CENTER, Color.GRAY);
                 table.addCell(cell);
 
-                cell = createItemCell(String.format("%.2f", item.getUnitPrice()), Element.ALIGN_CENTER);
+                cell = createItemCell(String.format("%.2f", item.getUnitPrice()), Element.ALIGN_CENTER, Color.GRAY);
                 table.addCell(cell);
 
-                cell = createItemCell(String.format("%.2f", item.getAmount()), Element.ALIGN_RIGHT);
+                cell = createItemCell(String.format("$              %.2f", item.getAmount()), Element.ALIGN_JUSTIFIED_ALL);
                 table.addCell(cell);
 
                 subtotal += item.getAmount();
@@ -91,6 +91,11 @@ public class InvoiceGenerator {
 
         public CellBuilder setHorizontalAlignment(int alignment) {
             cell.setHorizontalAlignment(alignment);
+            return this;
+        }
+
+        public CellBuilder setVerticalAlignment(int alignment) {
+            cell.setVerticalAlignment(alignment);
             return this;
         }
 
@@ -142,11 +147,21 @@ public class InvoiceGenerator {
         return cell;
     }
 
+    private PdfPCell createItemCell(String text, int alignment, Color textColor) {
+        PdfPCell cell = createItemCell(text, alignment);
+        cell.setPhrase(new Phrase(text, FontFactory.getFont(FontFactory.HELVETICA, 10, textColor)));
+        return cell;
+    }
+
     private void addItemHeaderCell(PdfPTable table, String text) {
-        PdfPCell cell = new PdfPCell(new Phrase(text));
+        PdfPCell cell = CellBuilder.newCell()
+                .setPhrase(new Phrase(text, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12)))
+                .setHorizontalAlignment(Element.ALIGN_CENTER)
+                .setPaddingTop(5)
+                .setPaddingBottom(5)
+                .setBorder(Rectangle.NO_BORDER)
+                .build();
         cell.setBackgroundColor(Color.LIGHT_GRAY);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setBorder(Rectangle.NO_BORDER);
         table.addCell(cell);
     }
 
@@ -158,18 +173,26 @@ public class InvoiceGenerator {
             table.addCell(CellBuilder.newCell()
                     .setPhrase(new Phrase(""))
                     .setHorizontalAlignment(Element.ALIGN_LEFT)
+                    .setPaddingTop(5)
+                    .setPaddingBottom(5)
                     .setBorder(Rectangle.NO_BORDER).build());
             table.addCell(CellBuilder.newCell()
                     .setPhrase(new Phrase(""))
                     .setHorizontalAlignment(Element.ALIGN_LEFT)
+                    .setPaddingTop(5)
+                    .setPaddingBottom(5)
                     .setBorder(Rectangle.NO_BORDER).build());
             table.addCell(CellBuilder.newCell()
                     .setPhrase(new Phrase(footerLabels[i]))
                     .setHorizontalAlignment(Element.ALIGN_LEFT)
+                    .setPaddingTop(5)
+                    .setPaddingBottom(5)
                     .setBorder(Rectangle.NO_BORDER).build());
             table.addCell(CellBuilder.newCell()
-                    .setPhrase(new Phrase(String.format("$ %.2f", footerValues[i]), FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12)))
-                    .setHorizontalAlignment(Element.ALIGN_RIGHT)
+                    .setPhrase(new Phrase(String.format("$              %.2f", footerValues[i]), FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12)))
+                    .setHorizontalAlignment(Element.ALIGN_JUSTIFIED_ALL)
+                    .setPaddingTop(5)
+                    .setPaddingBottom(5)
                     .setBorder(Rectangle.NO_BORDER).build());
         }
     }
