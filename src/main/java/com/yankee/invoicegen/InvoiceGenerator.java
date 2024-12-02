@@ -49,7 +49,7 @@ public class InvoiceGenerator {
                 cell = createItemCell(String.valueOf(item.getQuantity()), Element.ALIGN_CENTER);
                 table.addCell(cell);
 
-                cell = createItemCell(String.format("%.2f", item.getUnitPrice()), Element.ALIGN_RIGHT);
+                cell = createItemCell(String.format("%.2f", item.getUnitPrice()), Element.ALIGN_CENTER);
                 table.addCell(cell);
 
                 cell = createItemCell(String.format("%.2f", item.getAmount()), Element.ALIGN_RIGHT);
@@ -79,8 +79,8 @@ public class InvoiceGenerator {
         return cell;
     }
 
-    private PdfPCell createDetailCellRight(String text) {
-        PdfPCell cell = new PdfPCell(new Phrase(text, FontFactory.getFont(FontFactory.HELVETICA, 10)));
+    private PdfPCell createDetailCellRight(String text, String fontName) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, FontFactory.getFont(fontName, 10)));
         cell.setBorder(Rectangle.NO_BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
         return cell;
@@ -88,6 +88,8 @@ public class InvoiceGenerator {
 
     private PdfPCell createItemCell(String text) {
         PdfPCell cell = new PdfPCell(new Phrase(text));
+        cell.setPaddingTop(5);
+        cell.setPaddingBottom(5);
         cell.setBorder(Rectangle.BOTTOM);
         return cell;
     }
@@ -113,6 +115,12 @@ public class InvoiceGenerator {
         return cell;
     }
 
+    private PdfPCell createCell(String text, int alignment, int border, String fontName, int fontSize) {
+        PdfPCell cell = createCell(text, alignment, border);
+        cell.setPhrase(new Phrase(text, FontFactory.getFont(fontName, fontSize)));
+        return cell;
+    }
+
     private void composeTableFooter(PdfPTable table, double subtotal, double tax, double total) {
         String[] footerLabels = {"Subtotal", "Tax", "Total"};
         double[] footerValues = {subtotal, tax, total};
@@ -121,7 +129,7 @@ public class InvoiceGenerator {
             table.addCell(createCell("", Element.ALIGN_LEFT, Rectangle.NO_BORDER));
             table.addCell(createCell("", Element.ALIGN_LEFT, Rectangle.NO_BORDER));
             table.addCell(createCell(footerLabels[i], Element.ALIGN_LEFT, Rectangle.NO_BORDER));
-            table.addCell(createCell(String.format("%.2f", footerValues[i]), Element.ALIGN_RIGHT, Rectangle.NO_BORDER));
+            table.addCell(createCell(String.format("$ %.2f", footerValues[i]), Element.ALIGN_RIGHT, Rectangle.NO_BORDER, FontFactory.HELVETICA_BOLD, 12));
         }
     }
 
@@ -134,7 +142,7 @@ public class InvoiceGenerator {
         // Left side: company logo and name
         PdfPTable logoTable = new PdfPTable(1);
         Image logo = Image.getInstance(headerData.getLogoPath());
-        logo.scaleToFit(50, 50);
+        logo.scaleToFit(100, 100);
         PdfPCell logoCell = new PdfPCell(logo);
         logoCell.setBorder(Rectangle.NO_BORDER);
         logoTable.addCell(logoCell);
@@ -153,13 +161,13 @@ public class InvoiceGenerator {
         detailsTable.setWidthPercentage(100);
 
         detailsTable.addCell(createDetailCellLeft("Invoice#: "));
-        detailsTable.addCell(createDetailCellRight(headerData.getInvoiceNumber()));
+        detailsTable.addCell(createDetailCellRight(headerData.getInvoiceNumber(), FontFactory.HELVETICA_BOLD));
         detailsTable.addCell(createDetailCellLeft("Service Date: "));
-        detailsTable.addCell(createDetailCellRight(headerData.getServiceDate()));
+        detailsTable.addCell(createDetailCellRight(headerData.getServiceDate(), FontFactory.HELVETICA_BOLD));
         detailsTable.addCell(createDetailCellLeft("Due Date: "));
-        detailsTable.addCell(createDetailCellRight(headerData.getDueDate()));
+        detailsTable.addCell(createDetailCellRight(headerData.getDueDate(), FontFactory.HELVETICA_BOLD));
         detailsTable.addCell(createDetailCellLeft("Amount Due: "));
-        detailsTable.addCell(createDetailCellRight(headerData.getAmountDue()));
+        detailsTable.addCell(createDetailCellRight(headerData.getAmountDue(), FontFactory.HELVETICA_BOLD));
 
 
         PdfPCell detailsCell = new PdfPCell(detailsTable);
@@ -178,11 +186,11 @@ public class InvoiceGenerator {
         table.setSpacingBefore(20f);
 
         table.addCell(createDetailCellLeft("Customer: "));
-        table.addCell(createDetailCellRight(headerData.getCustomerName()));
+        table.addCell(createDetailCellRight(headerData.getCustomerName(), FontFactory.HELVETICA));
         table.addCell(createDetailCellLeft("Billing Address: "));
-        table.addCell(createDetailCellRight(headerData.getBillingAddress()));
+        table.addCell(createDetailCellRight(headerData.getBillingAddress(), FontFactory.HELVETICA));
         table.addCell(createDetailCellLeft("Service Address: "));
-        table.addCell(createDetailCellRight(headerData.getServiceAddress()));
+        table.addCell(createDetailCellRight(headerData.getServiceAddress(), FontFactory.HELVETICA));
 
         return table;
     }
