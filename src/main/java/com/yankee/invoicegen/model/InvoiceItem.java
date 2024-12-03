@@ -1,10 +1,10 @@
 package com.yankee.invoicegen.model;
 
 public class InvoiceItem {
-    String name;
-    int quantity;
-    double unitPrice;
-    double amount;
+    private String name;
+    private int quantity;
+    private double unitPrice;
+    private double amount;
 
     public InvoiceItem(String name, int quantity, double unitPrice, double amount) {
         this.name = name;

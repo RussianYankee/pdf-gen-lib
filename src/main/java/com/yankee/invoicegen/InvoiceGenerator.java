@@ -6,7 +6,7 @@ import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import com.yankee.invoicegen.model.InvoiceHeaderData;
+import com.yankee.invoicegen.model.InvoiceData;
 import com.yankee.invoicegen.model.InvoiceItem;
 
 import java.awt.*;
@@ -14,18 +14,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class InvoiceGenerator {
-    public void generateInvoice(String filePath, InvoiceHeaderData headerData, InvoiceItem[] items, double taxRate) {
+    public void generateInvoice(String filePath, InvoiceData data, double taxRate) {
         Document document = new Document(PageSize.LETTER);
         try {
             PdfWriter.getInstance(document, new FileOutputStream(filePath));
             document.open();
 
             // Add header table
-            document.add(composeHeaderTable(headerData));
+            document.add(composeHeaderTable(data));
 
             document.add(new Chunk("\n"));
             // Add customer details section
-            document.add(composeCustomerTable(headerData));
+            document.add(composeCustomerTable(data));
 
             // Add table
             PdfPTable table = new PdfPTable(4);
@@ -41,7 +41,7 @@ public class InvoiceGenerator {
             addItemHeaderCell(table, "Amount");
 
             double subtotal = 0;
-            for (InvoiceItem item : items) {
+            for (InvoiceItem item : data.getItems()) {
                 // Item cells with only bottom border
                 cell = createItemCell(item.getName());
                 table.addCell(cell);
@@ -165,6 +165,7 @@ public class InvoiceGenerator {
         table.addCell(cell);
     }
 
+    // Footer section
     private void composeTableFooter(PdfPTable table, double subtotal, double tax, double total) {
         String[] footerLabels = {"Subtotal", "Tax", "Total"};
         double[] footerValues = {subtotal, tax, total};
@@ -197,7 +198,8 @@ public class InvoiceGenerator {
         }
     }
 
-    private PdfPTable composeHeaderTable(InvoiceHeaderData headerData) throws IOException {
+    // Header section
+    private PdfPTable composeHeaderTable(InvoiceData headerData) throws IOException {
         PdfPTable table = new PdfPTable(2);
         table.setWidthPercentage(100);
         table.setWidths(new int[]{2, 1});
@@ -242,7 +244,8 @@ public class InvoiceGenerator {
         return table;
     }
 
-    private PdfPTable composeCustomerTable(InvoiceHeaderData headerData) {
+    // Customer details section
+    private PdfPTable composeCustomerTable(InvoiceData headerData) {
         PdfPTable table = new PdfPTable(2);
         table.setWidthPercentage(60);
         table.setHorizontalAlignment(Element.ALIGN_LEFT);
