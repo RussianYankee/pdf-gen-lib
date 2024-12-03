@@ -1,15 +1,34 @@
 package com.yankee.invoicegen.model;
 
-public class InvoiceHeaderData {
-    String logoPath;
-    String companyName;
-    String invoiceNumber;
-    String serviceDate;
-    String dueDate;
-    String amountDue;
-    String customerName;
-    String billingAddress;
-    String serviceAddress;
+public class InvoiceData {
+    private String logoPath;
+    private String companyName;
+    private String invoiceNumber;
+    private String serviceDate;
+    private String dueDate;
+    private String amountDue;
+    private String customerName;
+    private String billingAddress;
+    private String serviceAddress;
+    private double taxRate;
+
+    private InvoiceItem[] items;
+
+    public InvoiceItem[] getItems() {
+        return items;
+    }
+
+    public void setItems(InvoiceItem[] items) {
+        this.items = items;
+    }
+
+    public double getTaxRate() {
+        return taxRate;
+    }
+
+    public void setTaxRate(double taxRate) {
+        this.taxRate = taxRate;
+    }
 
     public String getLogoPath() {
         return logoPath;
@@ -83,53 +102,63 @@ public class InvoiceHeaderData {
         this.serviceAddress = serviceAddress;
     }
 
-    public InvoiceHeaderData logoPath(String logoPath) {
+    public InvoiceData logoPath(String logoPath) {
         setLogoPath(logoPath);
         return this;
     }
 
-    public InvoiceHeaderData companyName(String companyName) {
+    public InvoiceData companyName(String companyName) {
         setCompanyName(companyName);
         return this;
     }
 
-    public InvoiceHeaderData invoiceNumber(String invoiceNumber) {
+    public InvoiceData invoiceNumber(String invoiceNumber) {
         setInvoiceNumber(invoiceNumber);
         return this;
     }
 
-    public InvoiceHeaderData serviceDate(String serviceDate) {
+    public InvoiceData serviceDate(String serviceDate) {
         setServiceDate(serviceDate);
         return this;
     }
 
-    public InvoiceHeaderData dueDate(String dueDate) {
+    public InvoiceData dueDate(String dueDate) {
         setDueDate(dueDate);
         return this;
     }
 
-    public InvoiceHeaderData amountDue(String amountDue) {
+    public InvoiceData amountDue(String amountDue) {
         setAmountDue(amountDue);
         return this;
     }
 
-    public InvoiceHeaderData customerName(String customerName) {
+    public InvoiceData customerName(String customerName) {
         setCustomerName(customerName);
         return this;
     }
 
-    public InvoiceHeaderData billingAddress(String billingAddress) {
+    public InvoiceData billingAddress(String billingAddress) {
         setBillingAddress(billingAddress);
         return this;
     }
 
-    public InvoiceHeaderData serviceAddress(String serviceAddress) {
+    public InvoiceData serviceAddress(String serviceAddress) {
         setServiceAddress(serviceAddress);
         return this;
     }
 
-    public InvoiceHeaderData build() {
+    public InvoiceData build() {
         return this;
 
+    }
+
+    public InvoiceData taxRate(double taxRate) {
+        setTaxRate(taxRate);
+        return this;
+    }
+
+    public InvoiceData items(InvoiceItem[] items) {
+        setItems(items);
+        return this;
     }
 }
