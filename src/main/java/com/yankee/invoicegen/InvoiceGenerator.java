@@ -10,14 +10,15 @@ import com.yankee.invoicegen.model.InvoiceData;
 import com.yankee.invoicegen.model.InvoiceItem;
 
 import java.awt.*;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class InvoiceGenerator {
-    public void generateInvoice(String filePath, InvoiceData data, double taxRate) {
+    public ByteArrayOutputStream generateInvoice(InvoiceData data) {
         Document document = new Document(PageSize.LETTER);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
         try {
-            PdfWriter.getInstance(document, new FileOutputStream(filePath));
+            PdfWriter.getInstance(document, output);
             document.open();
 
             // Add header table
@@ -58,7 +59,7 @@ public class InvoiceGenerator {
                 subtotal += item.getAmount();
             }
 
-            double tax = subtotal * taxRate;
+            double tax = subtotal * data.getTaxRate();
             double total = subtotal + tax;
 
             // Add table footer
@@ -71,6 +72,7 @@ public class InvoiceGenerator {
         } finally {
             document.close();
         }
+        return output;
     }
 
     private static class CellBuilder {

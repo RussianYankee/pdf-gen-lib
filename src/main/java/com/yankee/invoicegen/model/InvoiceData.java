@@ -10,6 +10,7 @@ public class InvoiceData {
     private String customerName;
     private String billingAddress;
     private String serviceAddress;
+    private double taxRate;
 
     private InvoiceItem[] items;
 
@@ -19,6 +20,14 @@ public class InvoiceData {
 
     public void setItems(InvoiceItem[] items) {
         this.items = items;
+    }
+
+    public double getTaxRate() {
+        return taxRate;
+    }
+
+    public void setTaxRate(double taxRate) {
+        this.taxRate = taxRate;
     }
 
     public String getLogoPath() {
@@ -141,5 +150,15 @@ public class InvoiceData {
     public InvoiceData build() {
         return this;
 
+    }
+
+    public InvoiceData taxRate(double taxRate) {
+        setTaxRate(taxRate);
+        return this;
+    }
+
+    public InvoiceData items(InvoiceItem[] items) {
+        setItems(items);
+        return this;
     }
 }
