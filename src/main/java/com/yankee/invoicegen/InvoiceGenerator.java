@@ -42,7 +42,7 @@ public class InvoiceGenerator {
             addItemHeaderCell(table, "Amount");
 
             double subtotal = 0;
-            for (InvoiceItem item : data.getItems()) {
+            for (InvoiceItem item : data.getInvoiceItems()) {
                 // Item cells with only bottom border
                 cell = createItemCell(item.getName());
                 table.addCell(cell);
