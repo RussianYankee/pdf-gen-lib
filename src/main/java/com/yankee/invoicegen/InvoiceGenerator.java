@@ -42,7 +42,7 @@ public class InvoiceGenerator {
             addItemHeaderCell(table, "Amount");
 
             double subtotal = 0;
-            for (InvoiceItem item : data.getItems()) {
+            for (InvoiceItem item : data.getInvoiceItems()) {
                 // Item cells with only bottom border
                 cell = createItemCell(item.getName());
                 table.addCell(cell);
@@ -209,11 +209,18 @@ public class InvoiceGenerator {
 
         // Left side: company logo and name
         PdfPTable logoTable = new PdfPTable(1);
-        Image logo = Image.getInstance(headerData.getLogoPath());
-        logo.scaleToFit(100, 100);
-        PdfPCell logoCell = new PdfPCell(logo);
-        logoCell.setBorder(Rectangle.NO_BORDER);
-        logoTable.addCell(logoCell);
+        if (headerData.getLogoPath() != null && !headerData.getLogoPath().isEmpty()) {
+            Image logo = Image.getInstance(headerData.getLogoPath());
+            logo.scaleToFit(100, 100);
+            PdfPCell logoCell = new PdfPCell(logo);
+            logoCell.setBorder(Rectangle.NO_BORDER);
+            logoTable.addCell(logoCell);
+        } else {
+            PdfPCell emptyCell = new PdfPCell(new Phrase("No logo", FontFactory.getFont(FontFactory.HELVETICA, 16)));
+            emptyCell.setFixedHeight(100);
+            emptyCell.setBorder(Rectangle.NO_BORDER);
+            logoTable.addCell(emptyCell);
+        }
 
         PdfPCell companyNameCell = new PdfPCell(new Phrase(headerData.getCompanyName(), FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16)));
         companyNameCell.setBorder(Rectangle.NO_BORDER);

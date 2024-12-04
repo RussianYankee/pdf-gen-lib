@@ -6,6 +6,9 @@ public class InvoiceItem {
     private double unitPrice;
     private double amount;
 
+    public InvoiceItem() {
+    }
+
     public InvoiceItem(String name, int quantity, double unitPrice, double amount) {
         this.name = name;
         this.quantity = quantity;

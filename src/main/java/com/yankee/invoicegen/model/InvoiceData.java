@@ -1,5 +1,7 @@
 package com.yankee.invoicegen.model;
 
+import java.util.List;
+
 public class InvoiceData {
     private String logoPath;
     private String companyName;
@@ -12,14 +14,14 @@ public class InvoiceData {
     private String serviceAddress;
     private double taxRate;
 
-    private InvoiceItem[] items;
+    private List<InvoiceItem> invoiceItems;
 
-    public InvoiceItem[] getItems() {
-        return items;
+    public List<InvoiceItem> getInvoiceItems() {
+        return invoiceItems;
     }
 
-    public void setItems(InvoiceItem[] items) {
-        this.items = items;
+    public void setInvoiceItems(List<InvoiceItem> invoiceItems) {
+        this.invoiceItems = invoiceItems;
     }
 
     public double getTaxRate() {
@@ -157,8 +159,8 @@ public class InvoiceData {
         return this;
     }
 
-    public InvoiceData items(InvoiceItem[] items) {
-        setItems(items);
+    public InvoiceData items(List<InvoiceItem> items) {
+        setInvoiceItems(items);
         return this;
     }
 }
