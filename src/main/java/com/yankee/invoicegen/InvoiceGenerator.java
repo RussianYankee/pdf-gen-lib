@@ -14,7 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class InvoiceGenerator {
-    public ByteArrayOutputStream generateInvoice(InvoiceData data) {
+    public ByteArrayOutputStream generateInvoice(InvoiceData data, DocType docType) {
         Document document = new Document(PageSize.LETTER);
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         try {
@@ -22,7 +22,7 @@ public class InvoiceGenerator {
             document.open();
 
             // Add header table
-            document.add(composeHeaderTable(data));
+            document.add(composeHeaderTable(data, docType));
 
             document.add(new Chunk("\n"));
             // Add customer details section
@@ -201,11 +201,18 @@ public class InvoiceGenerator {
     }
 
     // Header section
-    private PdfPTable composeHeaderTable(InvoiceData headerData) throws IOException {
+    private PdfPTable composeHeaderTable(InvoiceData headerData, DocType docType) throws IOException {
         PdfPTable table = new PdfPTable(2);
         table.setWidthPercentage(100);
         table.setWidths(new int[]{2, 1});
         table.setWidthPercentage(100);
+
+        // Center cell with invoice title
+        PdfPCell centerCell = new PdfPCell(new Phrase(docType.toString(), FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24)));
+        centerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        centerCell.setColspan(2);
+        centerCell.setBorder(Rectangle.NO_BORDER);
+        table.addCell(centerCell);
 
         // Left side: company logo and name
         PdfPTable logoTable = new PdfPTable(1);
@@ -235,13 +242,15 @@ public class InvoiceGenerator {
         PdfPTable detailsTable = new PdfPTable(2);
         detailsTable.setWidthPercentage(100);
 
-        detailsTable.addCell(createDetailCellLeft("Invoice#: "));
+        detailsTable.addCell(createDetailCellLeft((docType == DocType.INVOICE) ? "Invoice#: " : "Estimate#: "));
         detailsTable.addCell(createDetailCellRight(headerData.getInvoiceNumber(), FontFactory.HELVETICA_BOLD));
+        if (docType == DocType.INVOICE) {
         detailsTable.addCell(createDetailCellLeft("Service Date: "));
         detailsTable.addCell(createDetailCellRight(headerData.getServiceDate(), FontFactory.HELVETICA_BOLD));
         detailsTable.addCell(createDetailCellLeft("Due Date: "));
         detailsTable.addCell(createDetailCellRight(headerData.getDueDate(), FontFactory.HELVETICA_BOLD));
-        detailsTable.addCell(createDetailCellLeft("Amount Due: "));
+        }
+        detailsTable.addCell(createDetailCellLeft((docType == DocType.INVOICE) ? "Amount Due: " : "Amount: "));
         detailsTable.addCell(createDetailCellRight(headerData.getAmountDue(), FontFactory.HELVETICA_BOLD));
 
 
